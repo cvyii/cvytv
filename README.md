@@ -1,93 +1,74 @@
-# CvyTV Family Edition v2.1
+# CvyTV
 
-A lightweight HTML/CSS/JavaScript TV interface for Kurdish, Iraqi, Arab and international channel directories. It is designed for remote-control navigation and browser testing on a Hisense VIDAA TV.
+CvyTV is a lightweight, remote-first live-TV directory designed for Hisense VIDAA televisions. This delivery is a browser-testable static build. It includes the TV UI, Kurdish Sorani/Arabic/English localization, RTL support, channel catalogue, local favorites and recents, search, filters, guide-unavailable states, and legal-source playback boundaries.
 
-## What changed in v2.1
+## Important platform status
 
-- Added Sorani Kurdish, Arabic and English interface languages with RTL support.
-- Added Kurdish, Iraqi, Arab and International categories.
-- Expanded the directory with official broadcaster pages where known.
-- Improved directional focus navigation for a TV remote; added Back and media-key handling.
-- Added a real HTML5 `<video>` player path for streams that you are authorized to use.
-- Added a device diagnostics panel for browser, screen size, native HLS, Media Source Extensions and local storage.
-- Favorites and recently watched remain local to the device/browser.
+This project does **not** claim to be a packaged or installable VIDAA application. VIDAA’s public materials describe an invite-only Partner Portal for authorized developers, but do not publicly document the manifest, signing, SDK, private-installation, or device-testing procedure needed to create a verified VIDAA package. The VIDAA adapter in `src/platform/vidaa.js` therefore reports those capabilities as pending rather than guessing.
 
-## Important playback status
+CvyTV is not an Android TV application and does not contain an APK.
 
-**No direct stream URLs are included.** A broadcaster website is not the same thing as permission to embed or redistribute its stream. Channel cards currently open an official broadcaster page where one is known; otherwise they show that an official link still needs to be added.
+## Run locally
 
-Only add a `streamUrl` in `app.js` when:
-1. You own the stream or have written permission to use it in CvyTV.
-2. The broadcaster/rights-holder permits the intended embedding or distribution.
-3. The stream format and playback have been tested on your exact TV model and firmware.
+No Node.js, npm, external packages, backend, database, or API key is required for this static build. On Windows with Python installed, open PowerShell in the project directory and run:
 
-For HLS, the player first tries the TV browser's native HLS support. An optional Hls.js build can be added locally if the TV supports Media Source Extensions. This project does not include Hls.js, a DRM integration, or any private IPTV playlist. DRM/protocol requirements for VIDAA partner apps are supplied by VIDAA after its partner/NDA process.
-
-## Preview on your Windows laptop
-
-1. Extract the project ZIP.
-2. Open the `cvytv` folder.
-3. Double-click `START-CvyTV.bat`. It shows your network details and starts the local server.
-4. On the laptop, open `http://localhost:8080`.
-
-If Windows asks, allow Python through Windows Firewall on your **Private network**. Keep the black server window open during testing.
-
-## Test on your Hisense TV (browser route)
-
-This is a **development test**, not a permanent app installation.
-
-1. Connect the TV and laptop to the same home network.
-2. On Windows, run `ipconfig` and note the laptop's IPv4 address (usually something like `192.168.1.20`).
-3. Keep the Python server running.
-4. Open the TV's built-in browser, if your model has one.
-5. Enter `http://LAPTOP-IP:8080` (replace `LAPTOP-IP` with the actual IPv4 address).
-6. Test the arrow keys, OK/Enter, Back, search, language switching, favorites, recent list and the device-test panel.
-7. If the page does not load, check that Windows Firewall allows Python on your private network and that both devices are on the same network. Some TV browsers may reject local HTTP pages or may not include a browser at all; this must be checked on the exact model.
-
-When finished, stop the local server with `Ctrl+C` in PowerShell.
-
-## Official VIDAA app deployment
-
-VIDAA's public partner information says it supports HTML5 apps, but detailed streaming/DRM specifications are shared after its partner/NDA process. Official store/launcher placement is handled through VIDAA's partner process; this is different from opening a URL in the TV browser. Do not assume a universal USB sideload method or use unofficial firmware/DNS/debug exploits.
-
-Official starting points:
-- VIDAA support and TV OS-version instructions: https://www.vidaa.com/support/
-- VIDAA partner information: https://www.vidaa.com/is-ortaklari/
-
-## Find your exact TV model and VIDAA version
-
-On the TV:
-1. Press **Home**.
-2. Open **Settings → Support → About**.
-3. Record the TV model and the full software/firmware version shown there.
-4. VIDAA says its OS version is the two digits after `V0000.0` (for example, `9.0`).
-5. If the model is not shown in About, check the model sticker on the back of the TV.
-
-Do not send the serial number. The model number and software/firmware version are enough for the next compatibility check.
-
-## Add an authorized stream
-
-In `app.js`, locate the channel object and add a `streamUrl` only after you have permission and a verified URL. Example shape (placeholder only; not a real stream):
-
-```js
-{
-  id: 'example-channel',
-  name: 'Example Channel',
-  category: 'Kurdish',
-  short: 'EX',
-  officialPage: 'https://broadcaster.example/watch',
-  pageKind: 'watch',
-  streamUrl: 'https://authorized.example/live.m3u8',
-  streamType: 'hls'
-}
+```powershell
+py -m http.server 3000 --bind 127.0.0.1
 ```
 
-Do not copy stream URLs from third-party IPTV apps, playlists or channel directories unless the rights-holder has explicitly authorized that use.
+If `py` is unavailable but `python` is installed, use:
 
-## Current limitations
+```powershell
+python -m http.server 3000 --bind 127.0.0.1
+```
 
-- This is still a browser-based prototype, not a signed VIDAA package or store-published app.
-- Official pages can change, require cookies, be geo-restricted, or refuse playback in the TV browser.
-- A page link being present does not mean its live video can be embedded in CvyTV.
-- Native HLS, codecs, remote key codes, browser storage and memory limits must be tested on the actual TV.
-- Android TV packaging is not included in this VIDAA-focused build.
+Then open `http://127.0.0.1:3000/` in a modern browser. Do not open `index.html` directly from `file://`; ES modules require an HTTP origin.
+
+The repository also includes a dependency-free PowerShell server for Windows:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .work\scripts\serve-static.ps1 -Root (Get-Location).Path -Port 5555
+```
+
+Open `http://127.0.0.1:5555/` when using that command. If a local security policy blocks loopback listeners, use any permitted static-file server or a normal browser preview extension instead.
+
+## GitHub Pages and LAN fallback
+
+The entry point uses relative asset paths and includes `icon.png`, so it is ready for a project site at `https://hawro018.github.io/cvytv/`. See `GITHUB_PAGES_DEPLOYMENT.md` for the exact Pages settings and the current GitHub connector status. `START-CvyTV.bat` starts a Python server on port 8080 for devices on the same Wi-Fi network; use `ipconfig` to find the laptop IPv4 address.
+
+## Remote simulation
+
+The application is designed around the normal TV remote pattern:
+
+- Arrow keys move the visible focus between navigation items, filters, channel cards, buttons, and dialogs.
+- Enter/OK activates the focused item.
+- Escape/Back closes the player or channel details and returns to the previous view.
+- The player includes previous and next channel actions.
+- Search can be tested with a normal keyboard; a VIDAA on-screen keyboard still requires validation on the exact TV model.
+
+## Data and legal streaming rules
+
+`src/data/channels.js` contains the requested Kurdish, Iraqi, Arabic, and international channels. The Kurdish catalogue now includes first-party pages for major broadcasters including Rudaw, Kurdistan 24, Kurdistan TV, Kurdsat, Kurdsat News, NRT, Ava Media, Zagros TV, Speda TV, Gali Kurdistan, Waar TV, Payam TV, KurdMax and its subchannels, Zarok TV, Rojhelat TV, Ronahi TV, and Jin TV. Each record has a status, stream type, official website field, and last-verification field. The build contains no fake stream URLs. No channel is marked `Working` unless an authorized playback URL is later verified and added deliberately. Channels marked `Official external link` identify the broadcaster’s first-party page; they are not in-app streams.
+
+The current build intentionally shows `Pending` or `Official external link` states rather than pretending that a channel has a working in-app stream. An official website cannot automatically be converted into an embedded player: many sites block framing, and a live HLS/DASH URL still requires broadcaster authorization and target-device playback verification. EPG data is also intentionally shown as unavailable until a legitimate schedule source is connected. See `KURDISH_CHANNEL_SOURCES.md` for the audited source list and the exact requirements for enabling in-app playback.
+
+## Project files
+
+- `index.html` — static entry point.
+- `src/main.js` — application state and UI behavior.
+- `src/styles.css` — TV layout and visual system.
+- `src/data/channels.js` — catalogue and verification metadata.
+- `src/i18n/translations.js` — English, Arabic, and Sorani strings.
+- `src/platform/storage.js` — local persistence adapter.
+- `src/platform/vidaa.js` — safe VIDAA capability and playback boundary.
+- `manus-routes.json` — managed website route manifest served at the website root.
+- `app.js` — compatibility entry for the original flat deployment layout.
+- `icon.png` — 512×512 launcher icon.
+- `START-CvyTV.bat` — Windows LAN fallback launcher.
+- `TV-TEST-CHECKLIST.md` — browser, remote, VIDAA, and LAN test checklist.
+- `VIDAA_INSTALLATION.md` — documented installation route and blockers.
+- `TESTING_REPORT.md` — browser validation and physical-TV limitations.
+
+## Future VIDAA integration
+
+Once VIDAA partner documentation or an authorized hardware test route is available, update only the adapter and packaging layer first. Confirm remote key names, media playback, HLS/DASH/DRM/codec support, local storage behavior, external links, manifest rules, certificates, and private testing before enabling them in the application. Keep the current browser fallback until those capabilities are verified.
