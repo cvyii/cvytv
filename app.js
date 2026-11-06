@@ -1,511 +1,70 @@
-/* CvyTV Family Edition v2.1
-   Direct stream URLs are intentionally blank until permission and device playback are verified.
-*/
+/* CvyTV Live Player — public HLS candidates checked 2026-11-06.
+ * Sources are public broadcaster/CDN endpoints discovered through iptv-org.
+ * Availability and redistribution rights can change; the UI always exposes the source.
+ */
 (function () {
   'use strict';
 
   var channels = [
-    { id: 'rudaw', name: 'Rudaw', category: 'Kurdish', short: 'R', officialPage: 'https://rudaw.net/english/live-tv', pageKind: 'watch' },
-    { id: 'k24', name: 'Kurdistan 24', category: 'Kurdish', short: 'K24', officialPage: 'https://www.kurdistan24.net/en/live_tv', pageKind: 'watch' },
-    { id: 'kurdistan-tv', name: 'Kurdistan TV', category: 'Kurdish', short: 'KTV', officialPage: 'https://www.kurdistantv.net/english/live', pageKind: 'watch' },
-    { id: 'nrt', name: 'NRT', category: 'Kurdish', short: 'NRT', officialPage: 'https://www.nrttv.com/', pageKind: 'website' },
-    { id: 'channel8', name: 'Channel 8', category: 'Kurdish', short: 'C8', officialPage: 'https://channel8.com/', pageKind: 'website' },
-    { id: 'speda', name: 'Speda TV', category: 'Kurdish', short: 'S', pageKind: 'pending' },
-    { id: 'kurdsat', name: 'Kurdsat', category: 'Kurdish', short: 'KS', pageKind: 'pending' },
-    { id: 'iraqiya', name: 'Al Iraqiya', category: 'Iraqi', short: 'IQ', officialPage: 'https://imn.iq/en/channels', pageKind: 'website' },
-    { id: 'sharqiya', name: 'Al Sharqiya', category: 'Iraqi', short: 'SH', officialPage: 'https://www.alsharqiya.com/', pageKind: 'website' },
-    { id: 'sumaria', name: 'Al Sumaria', category: 'Iraqi', short: 'SUM', officialPage: 'https://www.alsumaria.tv/', pageKind: 'website' },
-    { id: 'utv', name: 'UTV Iraq', category: 'Iraqi', short: 'UTV', officialPage: 'https://utviraq.net/', pageKind: 'website' },
-    { id: 'mbc-iraq', name: 'MBC Iraq', category: 'Iraqi', short: 'MBC', officialPage: 'https://www.mbc.net/', pageKind: 'website' },
-    { id: 'aljazeera-ar', name: 'Al Jazeera Arabic', category: 'Arab', short: 'AJ', officialPage: 'https://www.aljazeera.net/video/live', pageKind: 'watch' },
-    { id: 'alarabiya', name: 'Al Arabiya', category: 'Arab', short: 'AR', officialPage: 'https://shahid.mbc.net/en/livestream/Al-Arabiya/livechannel-387286', pageKind: 'watch' },
-    { id: 'sky-arabia', name: 'Sky News Arabia', category: 'Arab', short: 'SNA', officialPage: 'https://www.skynewsarabia.com/', pageKind: 'website' },
-    { id: 'aljazeera-en', name: 'Al Jazeera English', category: 'International', short: 'AJE', officialPage: 'https://www.aljazeera.com/', pageKind: 'website' },
-    { id: 'dw-news', name: 'DW News', category: 'International', short: 'DW', officialPage: 'https://www.dw.com/', pageKind: 'website' },
-    { id: 'france24', name: 'France 24', category: 'International', short: 'F24', officialPage: 'https://www.france24.com/en/', pageKind: 'website' }
+    { id: 'k24', name: 'Kurdistan 24', category: 'Kurdish', language: 'Kurdish / English', short: 'K24', color: '#69a8ff', stream: 'https://hlspackager.akamaized.net/live/DB/K24/HLS/K24.m3u8', source: 'https://www.kurdistan24.net/en/live', sourceName: 'Kurdistan 24', checked: '2026-11-06' },
+    { id: 'kurdsat', name: 'Kurdsat', category: 'Kurdish', language: 'Kurdish', short: 'KS', color: '#ff8ca8', stream: 'https://hlspackager.akamaized.net/live/DB/KURDSAT_HD/HLS/KURDSAT_HD.m3u8', source: 'https://www.kurdsat.tv/en', sourceName: 'Kurdsat CDN', checked: '2026-11-06' },
+    { id: 'kurdsat-news', name: 'Kurdsat News', category: 'Kurdish', language: 'Kurdish', short: 'KN', color: '#ffb36a', stream: 'https://hlspackager.akamaized.net/live/DB/KURDSAT_NEWS/HLS/KURDSAT_NEWS.m3u8', source: 'https://news.kurdsat.tv/ckb', sourceName: 'Kurdsat News CDN', checked: '2026-11-06' },
+    { id: 'channel8', name: 'Channel 8', category: 'Kurdish', language: 'Kurdish', short: 'C8', color: '#8cc8a2', stream: 'https://live.channel8.com/Channel8-Kurdish/index.fmp4.m3u8', source: 'https://channel8.com/', sourceName: 'Channel 8', checked: '2026-11-06' },
+    { id: 'hawro-tv', name: 'Hawro TV', category: 'Kurdish', language: 'Kurdish Sorani', short: 'HA', color: '#39e6b0', stream: '', source: '', sourceName: 'CvyTV local listing', checked: 'not direct HLS' },
+    { id: 'ava-media', name: 'Ava Media', category: 'Kurdish', language: 'Kurdish', short: 'AV', color: '#e2a6ff', stream: '', source: 'https://www.youtube.com/@AvaMedia_TV', sourceName: 'Ava Media official channel', checked: 'not direct HLS' },
+    { id: 'zagros-tv', name: 'Zagros TV', category: 'Kurdish', language: 'Kurdish', short: 'ZG', color: '#77d2c8', stream: '', source: 'https://zagrosnews.net/arabic', sourceName: 'Zagros official website', checked: 'not direct HLS' },
+    { id: 'speda-tv', name: 'Speda TV', category: 'Kurdish', language: 'Kurdish', short: 'SP', color: '#9dd663', stream: '', source: 'https://www.speda.net/', sourceName: 'Speda official website', checked: 'not direct HLS' },
+    { id: 'gali-kurdistan', name: 'Gali Kurdistan', category: 'Kurdish', language: 'Kurdish', short: 'GK', color: '#efb66a', stream: '', source: 'https://www.gksat.tv/', sourceName: 'Gali Kurdistan official website', checked: 'not direct HLS' },
+    { id: 'waar-tv', name: 'Waar TV', category: 'Kurdish', language: 'Kurdish', short: 'WA', color: '#84a9ff', stream: '', source: 'https://www.waarmedia.com/', sourceName: 'Waar official website', checked: 'not direct HLS' },
+    { id: 'payam-tv', name: 'Payam TV', category: 'Kurdish', language: 'Kurdish', short: 'PY', color: '#f097c3', stream: '', source: 'https://www.peyam.net/', sourceName: 'Payam official website', checked: 'not direct HLS' },
+    { id: 'kurdmax', name: 'KurdMax', category: 'Kurdish', language: 'Kurdish', short: 'KM', color: '#73d0af', stream: '', source: 'https://www.kurdmax.tv/', sourceName: 'KurdMax official website', checked: 'not direct HLS' },
+    { id: 'kurdmax-music', name: 'KurdMax Music', category: 'Kurdish', language: 'Kurdish', short: 'MU', color: '#c7a0ff', stream: '', source: 'https://www.kurdmax.tv/', sourceName: 'KurdMax official website', checked: 'not direct HLS' },
+    { id: 'kurdmax-show', name: 'KurdMax Show', category: 'Kurdish', language: 'Kurdish', short: 'SH', color: '#a98cff', stream: '', source: 'https://www.kurdmax.tv/', sourceName: 'KurdMax official website', checked: 'not direct HLS' },
+    { id: 'kurdmax-people', name: 'KurdMax People', category: 'Kurdish', language: 'Kurdish', short: 'PE', color: '#79c7d2', stream: '', source: 'https://www.kurdmax.tv/', sourceName: 'KurdMax official website', checked: 'not direct HLS' },
+    { id: 'zarok-tv', name: 'Zarok TV', category: 'Kurdish', language: 'Kurdish', short: 'ZR', color: '#6ed3e4', stream: '', source: 'https://zaroktv.com.tr/en/home/', sourceName: 'Zarok official website', checked: 'not direct HLS' },
+    { id: 'rojhelat-tv', name: 'Rojhelat TV', category: 'Kurdish', language: 'Kurdish', short: 'RJ', color: '#ffb36a', stream: '', source: 'https://www.rojhelat.media/', sourceName: 'Rojhelat official website', checked: 'not direct HLS' },
+    { id: 'ronahi-tv', name: 'Ronahi TV', category: 'Kurdish', language: 'Kurdish', short: 'RO', color: '#8cc7ff', stream: '', source: 'https://ronahi.tv/', sourceName: 'Ronahi official website', checked: 'not direct HLS' },
+    { id: 'jin-tv', name: 'Jin TV', category: 'Kurdish', language: 'Kurdish', short: 'JN', color: '#f39bba', stream: '', source: 'https://jintv.net/', sourceName: 'Jin TV official website', checked: 'not direct HLS' },
+    { id: 'afarin-tv', name: 'Afarin TV', category: 'Kurdish', language: 'Kurdish', short: 'AF', color: '#9ddc9f', stream: '', source: '', sourceName: 'Afarin public listing', checked: 'not direct HLS' },
+    { id: 'iraqiya-kurdish', name: 'Al Iraqiya Kurdish', category: 'Kurdish / Iraqi', language: 'Kurdish / Arabic', short: 'IK', color: '#b1a3ff', stream: 'https://imn-live.esite-lab.com/hls/iraqia-kurdish.m3u8', source: 'https://imn.iq/en/channels', sourceName: 'Iraqi Media Network', checked: '2026-11-06' },
+    { id: 'al-iraqiya', name: 'Al Iraqiya', category: 'Iraqi', language: 'Arabic', short: 'IQ', color: '#6cb8ff', stream: 'https://imn-live.esite-lab.com/hls/iraqia-general.m3u8', source: 'https://imn.iq/en/channels', sourceName: 'Iraqi Media Network', checked: '2026-11-06' },
+    { id: 'al-iraqiya-news', name: 'Al Iraqiya News', category: 'Iraqi', language: 'Arabic', short: 'IN', color: '#73d99a', stream: 'https://imn-live.esite-lab.com/hls/iraqia-news.m3u8', source: 'https://imn.iq/en/channels', sourceName: 'Iraqi Media Network', checked: '2026-11-06' },
+    { id: 'rudaw', name: 'Rudaw', category: 'Kurdish', language: 'Kurdish / Arabic / English', short: 'R', color: '#f5bd4b', stream: '', source: 'https://rudaw.net/english/live-tv', sourceName: 'Rudaw official live page', checked: 'not direct HLS' },
+    { id: 'nrt', name: 'NRT', category: 'Kurdish', language: 'Kurdish', short: 'NRT', color: '#ff865d', stream: '', source: 'https://www.nrttv.com/', sourceName: 'NRT official website', checked: 'not direct HLS' },
+    { id: 'kurdistan-tv', name: 'Kurdistan TV', category: 'Kurdish', language: 'Kurdish', short: 'KT', color: '#b18cff', stream: '', source: 'https://www.kurdistantv.net/english', sourceName: 'Kurdistan TV official website', checked: 'not direct HLS' }
   ];
 
-  // Add a streamUrl only when the broadcaster authorizes direct use and it has been tested on the target TV.
-  // Example: streamUrl: 'https://authorized.example/live.m3u8', streamType: 'hls'
-
-  var words = {
-    en: {
-      eyebrow: 'YOUR LOCAL TV HUB', heroTitle: 'Kurdish, Iraqi & world channels', heroSubtitle: 'Your channels, in one place.',
-      home: 'Home', favorites: 'Favorites', recent: 'Recently watched', search: 'Search channels...',
-      all: 'All channels', Kurdish: 'Kurdish', Iraqi: 'Iraqi', Arab: 'Arab', International: 'International',
-      list: 'Explore channels', remote: 'Use the arrow keys and OK on your TV remote', noResults: 'No channels found. Try another search or category.',
-      officialWatch: 'Official watch page', officialWebsite: 'Official website', pending: 'Official link not added',
-      noStreamTitle: 'Direct playback is not configured', noStreamBody: 'No authorized direct stream has been added for this channel. You can visit its official page instead.',
-      openOfficial: 'Open official page', close: 'Close', player: 'CvyTV Player', live: '● LIVE', channelLabel: 'CHANNEL',
-      playerReady: 'Ready when an authorized stream is added.', pressPlay: 'Stream loaded. Press Play on the video controls.', opening: 'The official broadcaster page is available. Select Open official page to visit it.',
-      unsupported: 'This TV browser does not report native HLS support, and no compatible HLS playback library is installed.',
-      playError: 'The TV browser could not start this stream. Check the URL, rights, network, and supported format.',
-      videoError: 'The video could not be played. The stream may be offline, blocked, or incompatible.',
-      deviceTest: 'Device test', deviceIntro: 'These values come from this browser. They do not confirm the exact TV model or VIDAA version.',
-      device: 'Device / browser', resolution: 'Screen size', nativeHls: 'Native HLS support', mse: 'Media Source Extensions', hlsjs: 'Hls.js library', storage: 'Local storage',
-      footer: 'A channel name does not mean direct playback is available. Use only official pages or streams you are authorized to distribute.',
-      version: 'CvyTV test build v2.1', pageKindWatch: 'Official watch page', pageKindWebsite: 'Official website', pageKindPending: 'No official page added yet'
-    },
-    ku: {
-      eyebrow: 'تەماشای تەلەفزیۆن لە یەک شوێن', heroTitle: 'کەناڵە کوردی، عێراقی و جیهانییەکان', heroSubtitle: 'کەناڵەکانت لە یەک شوێن.',
-      home: 'سەرەکی', favorites: 'دڵخوازەکان', recent: 'بینراوەکان', search: 'گەڕان بۆ کەناڵ...',
-      all: 'هەموو کەناڵەکان', Kurdish: 'کوردی', Iraqi: 'عێراقی', Arab: 'عەرەبی', International: 'نێودەوڵەتی',
-      list: 'کەناڵەکان', remote: 'بە دوگمەکانی تیر و OK بگەڕێ', noResults: 'هیچ کەناڵێک نەدۆزرایەوە. وشەیەکی تر تاقی بکەرەوە.',
-      officialWatch: 'پەڕەی بینینی فەرمی', officialWebsite: 'ماڵپەڕی فەرمی', pending: 'لینکی فەرمی زیاد نەکراوە',
-      noStreamTitle: 'پەخشی ڕاستەوخۆ ڕێک نەخراوە', noStreamBody: 'هیچ لینکی ڕاستەوخۆی ڕێگەپێدراو بۆ ئەم کەناڵە زیاد نەکراوە. دەتوانیت پەڕەی فەرمییەکەی بکەیتەوە.',
-      openOfficial: 'کردنەوەی پەڕەی فەرمی', close: 'داخستن', player: 'یاریزانی CvyTV', live: '● ڕاستەوخۆ', channelLabel: 'کەناڵ',
-      playerReady: 'کاتێک لینکی ڕێگەپێدراو زیاد بکرێت ئامادە دەبێت.', pressPlay: 'پەخش بارکرا. لە کۆنترۆڵی ڤیدیۆ دوگمەی Play دابگرە.', opening: 'پەڕەی فەرمیی کەناڵ بەردەستە. دوگمەی کردنەوەی پەڕەی فەرمی هەڵبژێرە.',
-      unsupported: 'وێبگەڕی ئەم تەلەفزیۆنە پشتگیری HLSی سروشتی نیشان نادات و هیچ کتێبخانەیەکی گونجاوی HLS دانەمەزراوە.',
-      playError: 'وێبگەڕی تەلەفزیۆن نەیتوانی ئەم پەخشە دەست پێ بکات. لینک، مۆڵەت، ئینتەرنێت و جۆری فایل بپشکنە.',
-      videoError: 'ڤیدیۆکە نەیتوانی پەخش بکرێت. لەوانەیە پەخشەکە وەستابێت یان گونجاو نەبێت.',
-      deviceTest: 'تاقیکردنەوەی ئامێر', deviceIntro: 'ئەم زانیارییانە لە وێبگەڕەکەوە وەرگیراون. مۆدێل یان وەشانی VIDAA پشتڕاست ناکەنەوە.',
-      device: 'ئامێر / وێبگەڕ', resolution: 'قەبارەی شاشە', nativeHls: 'پشتگیری HLSی سروشتی', mse: 'Media Source Extensions', hlsjs: 'کتێبخانەی Hls.js', storage: 'بیرگەی ناوخۆیی',
-      footer: 'ناوی کەناڵ بە مانای بەردەستبوونی پەخشی ڕاستەوخۆ نییە. تەنها پەڕەی فەرمی یان لینکی ڕێگەپێدراو بەکاربهێنە.',
-      version: 'وەشانی تاقیکردنەوەی CvyTV ٢.١', pageKindWatch: 'پەڕەی بینینی فەرمی', pageKindWebsite: 'ماڵپەڕی فەرمی', pageKindPending: 'هێشتا پەڕەی فەرمی نییە'
-    },
-    ar: {
-      eyebrow: 'منصة التلفزيون المحلية', heroTitle: 'قنوات كردية وعراقية وعالمية', heroSubtitle: 'قنواتك في مكان واحد.',
-      home: 'الرئيسية', favorites: 'المفضلة', recent: 'المشاهدة مؤخراً', search: 'ابحث عن القنوات...',
-      all: 'كل القنوات', Kurdish: 'كردية', Iraqi: 'عراقية', Arab: 'عربية', International: 'عالمية',
-      list: 'استكشف القنوات', remote: 'استخدم الأسهم وزر OK في جهاز التحكم', noResults: 'لم يتم العثور على قنوات. جرّب بحثاً أو فئة أخرى.',
-      officialWatch: 'صفحة المشاهدة الرسمية', officialWebsite: 'الموقع الرسمي', pending: 'لم تتم إضافة رابط رسمي',
-      noStreamTitle: 'التشغيل المباشر غير مهيأ', noStreamBody: 'لم تتم إضافة بث مباشر مصرح به لهذه القناة. يمكنك فتح صفحتها الرسمية بدلاً من ذلك.',
-      openOfficial: 'فتح الصفحة الرسمية', close: 'إغلاق', player: 'مشغل CvyTV', live: '● مباشر', channelLabel: 'قناة',
-      playerReady: 'سيكون جاهزاً عند إضافة بث مصرح به.', pressPlay: 'تم تحميل البث. اضغط Play من أدوات التحكم بالفيديو.', opening: 'الصفحة الرسمية متاحة. اختر فتح الصفحة الرسمية لزيارتها.',
-      unsupported: 'متصفح التلفزيون لا يعلن عن دعم HLS الأصلي، ولا توجد مكتبة HLS متوافقة مثبتة.',
-      playError: 'تعذر على متصفح التلفزيون تشغيل البث. تحقق من الرابط والحقوق والشبكة والتنسيق المدعوم.',
-      videoError: 'تعذر تشغيل الفيديو. قد يكون البث متوقفاً أو محجوباً أو غير متوافق.',
-      deviceTest: 'فحص الجهاز', deviceIntro: 'هذه المعلومات من المتصفح الحالي ولا تؤكد طراز التلفزيون أو إصدار VIDAA.',
-      device: 'الجهاز / المتصفح', resolution: 'حجم الشاشة', nativeHls: 'دعم HLS الأصلي', mse: 'Media Source Extensions', hlsjs: 'مكتبة Hls.js', storage: 'التخزين المحلي',
-      footer: 'وجود اسم القناة لا يعني توفر بث مباشر. استخدم الصفحات الرسمية أو البث الذي تملك إذناً بتوزيعه فقط.',
-      version: 'نسخة CvyTV التجريبية 2.1', pageKindWatch: 'صفحة مشاهدة رسمية', pageKindWebsite: 'موقع رسمي', pageKindPending: 'لم تتم إضافة صفحة رسمية'
-    }
+  var lang = 'en';
+  var category = 'All';
+  var current = null;
+  var hls = null;
+  var hlsPromise = null;
+  var copy = {
+    en: { dir: 'ltr', title: 'CvyTV Live', subtitle: 'Kurdish, Iraqi and public live channels', search: 'Search channels…', all: 'All', play: 'Play', source: 'Official source', noStream: 'No direct public stream was found for this channel.', unavailable: 'This stream is currently unavailable or incompatible with this browser/TV.', checked: 'Checked', loading: 'Loading live stream…', live: 'LIVE', external: 'Open source', note: 'Streams are public HLS candidates. Availability and rights can change.', language: 'Language', error: 'Playback failed. Try another quality or open the official source.' },
+    ku: { dir: 'rtl', title: 'CvyTV ڕاستەوخۆ', subtitle: 'کەناڵە کوردی و عێراقییە ڕاستەوخۆکان', search: 'گەڕان بۆ کەناڵ…', all: 'هەموو', play: 'پەخشکردن', source: 'سەرچاوەی فەرمی', noStream: 'بۆ ئەم کەناڵە پەخشی ڕاستەوخۆی گشتی نەدۆزرایەوە.', unavailable: 'ئەم پەخشە ئێستا بەردەست نییە یان لەگەڵ ئەم وێبگەڕ/تەلەفزیۆنە ناگونجێت.', checked: 'پشکنراوە', loading: 'پەخش بار دەکرێت…', live: 'ڕاستەوخۆ', external: 'کردنەوەی سەرچاوە', language: 'زمان', error: 'پەخش سەرکەوتوو نەبوو. کوالێتییەکی تر تاقی بکەرەوە یان سەرچاوەی فەرمی بکەرەوە.' },
+    ar: { dir: 'rtl', title: 'CvyTV مباشر', subtitle: 'قنوات كردية وعراقية مباشرة', search: 'ابحث عن قناة…', all: 'الكل', play: 'تشغيل', source: 'المصدر الرسمي', noStream: 'لا يوجد بث مباشر عام لهذه القناة.', unavailable: 'البث غير متاح حالياً أو غير متوافق مع هذا المتصفح/التلفزيون.', checked: 'تم الفحص', loading: 'جارٍ تحميل البث…', live: 'مباشر', external: 'فتح المصدر', language: 'اللغة', error: 'فشل التشغيل. جرّب جودة أخرى أو افتح المصدر الرسمي.' }
   };
 
-  var categoryOrder = ['Kurdish', 'Iraqi', 'Arab', 'International'];
-  var category = 'All';
-  var view = 'all';
-  var selectedChannel = null;
-  var hlsInstance = null;
-  var video = document.getElementById('video');
-  var grid = document.getElementById('grid');
-  var search = document.getElementById('search');
-  var languageSelect = document.getElementById('language');
-  var player = document.getElementById('player');
-  var playerMessage = document.getElementById('playerMessage');
-  var playerStatus = document.getElementById('playerStatus');
-  var officialPageButton = document.getElementById('officialPageButton');
-  var currentLanguage = safeRead('cvytv-language', 'ku');
-  if (!words[currentLanguage]) currentLanguage = 'ku';
-
-  function safeRead(key, fallback) {
-    try {
-      var value = localStorage.getItem(key);
-      return value === null ? fallback : value;
-    } catch (error) { return fallback; }
+  function t(key) { return (copy[lang] && copy[lang][key]) || copy.en[key] || key; }
+  function esc(value) { return String(value).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); }
+  function visible() {
+    var q = (document.getElementById('cvytv-search').value || '').toLowerCase();
+    return channels.filter(function (c) { return (category === 'All' || c.category.indexOf(category) !== -1) && (!q || c.name.toLowerCase().indexOf(q) !== -1); });
   }
-  function safeWrite(key, value) {
-    try { localStorage.setItem(key, value); return true; }
-    catch (error) { return false; }
+  function shell() {
+    document.documentElement.dir = copy[lang].dir;
+    document.documentElement.lang = lang === 'ku' ? 'ckb' : lang;
+    document.body.innerHTML = '<style>' + css() + '</style><main class="cvytv"><header><div><div class="brand">Cvy<span>TV</span></div><h1 id="cvytv-title"></h1><p id="cvytv-subtitle"></p></div><label class="lang"><span id="cvytv-language"></span><select id="cvytv-lang"><option value="en">English</option><option value="ku">کوردی</option><option value="ar">العربية</option></select></label></header><section class="hero"><div class="filters" id="cvytv-filters"></div><input id="cvytv-search" type="search" /></section><section class="layout"><div id="cvytv-grid" class="grid"></div><aside class="player"><div class="player-head"><span id="cvytv-live"></span><span id="cvytv-now">Select a channel</span></div><video id="cvytv-video" controls playsinline></video><div id="cvytv-status" class="status"></div><div class="player-actions"><a id="cvytv-source" target="_blank" rel="noopener"></a><button id="cvytv-play"></button></div></aside></section><footer id="cvytv-note"></footer></main>';
+    document.getElementById('cvytv-title').textContent = t('title'); document.getElementById('cvytv-subtitle').textContent = t('subtitle'); document.getElementById('cvytv-language').textContent = t('language'); document.getElementById('cvytv-search').placeholder = t('search'); document.getElementById('cvytv-note').textContent = t('note');
+    document.getElementById('cvytv-lang').value = lang; document.getElementById('cvytv-lang').onchange = function (e) { lang = e.target.value; shell(); };
+    document.getElementById('cvytv-search').oninput = render; renderFilters(); render();
   }
-  function readArray(key) {
-    try {
-      var value = JSON.parse(safeRead(key, '[]'));
-      return Array.isArray(value) ? value : [];
-    } catch (error) { return []; }
-  }
-  var favorites = readArray('cvytv-favorites');
-  var recent = readArray('cvytv-recent');
-
-  function t(key) { return words[currentLanguage][key] || words.en[key] || key; }
-  function categoryText(name) { return name === 'All' ? t('all') : t(name); }
-  function setText(id, value) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = value;
-  }
-  function applyLanguage() {
-    var rtl = currentLanguage !== 'en';
-    document.documentElement.lang = currentLanguage;
-    document.documentElement.dir = rtl ? 'rtl' : 'ltr';
-    languageSelect.value = currentLanguage;
-    setText('eyebrow', t('eyebrow'));
-    setText('heroTitle', t('heroTitle'));
-    setText('heroSubtitle', t('heroSubtitle'));
-    setText('homeButton', t('home'));
-    document.querySelector('[data-view="favorites"]').textContent = t('favorites');
-    document.querySelector('[data-view="recent"]').textContent = t('recent');
-    search.placeholder = t('search');
-    search.setAttribute('aria-label', t('search'));
-    setText('remoteHint', t('remote'));
-    setText('deviceInfoButton', t('deviceTest'));
-    setText('deviceTitle', t('deviceTest'));
-    setText('deviceIntro', t('deviceIntro'));
-    setText('footerText', t('footer'));
-    setText('footerHint', t('version'));
-    setText('liveLabel', t('channelLabel'));
-    setText('closePlayer', t('close'));
-    setText('closeDevicePanel', t('close'));
-    renderFilters();
-    render();
-  }
-
-  function renderFilters() {
-    var filters = document.getElementById('filters');
-    filters.innerHTML = '';
-    var all = ['All'].concat(categoryOrder);
-    all.forEach(function (name) {
-      var button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'chip' + (category === name ? ' selected' : '');
-      button.textContent = categoryText(name);
-      button.setAttribute('data-category', name);
-      button.setAttribute('data-focusable', 'true');
-      button.setAttribute('aria-pressed', category === name ? 'true' : 'false');
-      filters.appendChild(button);
-    });
-  }
-
-  function visibleChannels() {
-    var q = search.value.trim().toLowerCase();
-    return channels.filter(function (channel) {
-      var categoryMatch = category === 'All' || channel.category === category;
-      var viewMatch = view === 'favorites' ? favorites.indexOf(channel.id) !== -1 :
-        view === 'recent' ? recent.indexOf(channel.id) !== -1 : true;
-      var queryMatch = !q || channel.name.toLowerCase().indexOf(q) !== -1 || channel.category.toLowerCase().indexOf(q) !== -1;
-      return categoryMatch && viewMatch && queryMatch;
-    });
-  }
-
-  function render() {
-    var focusedId = document.activeElement && document.activeElement.id;
-    var list = visibleChannels();
-    grid.innerHTML = '';
-    document.getElementById('empty').hidden = list.length > 0;
-    setText('listTitle', view === 'favorites' ? t('favorites') : view === 'recent' ? t('recent') : t('list'));
-
-    list.forEach(function (channel) {
-      var card = document.createElement('article');
-      card.id = 'channel-' + channel.id;
-      card.className = 'channel';
-      card.tabIndex = 0;
-      card.setAttribute('role', 'button');
-      card.setAttribute('data-focusable', 'true');
-      card.setAttribute('aria-label', channel.name + ', ' + categoryText(channel.category));
-
-      var logo = document.createElement('div');
-      logo.className = 'logo-box';
-      logo.textContent = channel.short;
-
-      var copy = document.createElement('div');
-      copy.className = 'channel-copy';
-      var title = document.createElement('h3');
-      title.textContent = channel.name;
-      var subtitle = document.createElement('small');
-      subtitle.textContent = categoryText(channel.category);
-      var status = document.createElement('div');
-      status.className = 'channel-status';
-      status.textContent = channel.officialPage ? (channel.pageKind === 'watch' ? t('officialWatch') : t('officialWebsite')) : t('pending');
-      copy.appendChild(title);
-      copy.appendChild(subtitle);
-      copy.appendChild(document.createElement('br'));
-      copy.appendChild(status);
-
-      var star = document.createElement('button');
-      star.id = 'favorite-' + channel.id;
-      star.type = 'button';
-      star.className = 'favorite-button' + (favorites.indexOf(channel.id) !== -1 ? ' on' : '');
-      star.textContent = '★';
-      star.setAttribute('data-focusable', 'true');
-      star.setAttribute('aria-label', favorites.indexOf(channel.id) !== -1 ? 'Remove ' + channel.name + ' from favorites' : 'Add ' + channel.name + ' to favorites');
-      star.setAttribute('aria-pressed', favorites.indexOf(channel.id) !== -1 ? 'true' : 'false');
-      star.addEventListener('click', function (event) {
-        event.stopPropagation();
-        toggleFavorite(channel.id);
-      });
-
-      card.appendChild(logo);
-      card.appendChild(copy);
-      card.appendChild(star);
-      card.addEventListener('click', function (event) {
-        if (event.target === star) return;
-        openChannel(channel);
-      });
-      card.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          openChannel(channel);
-        }
-      });
-      grid.appendChild(card);
-    });
-
-    if (focusedId) {
-      var previous = document.getElementById(focusedId);
-      if (previous && typeof previous.focus === 'function') previous.focus();
-    }
-    updateNavState();
-  }
-
-  function updateNavState() {
-    Array.prototype.forEach.call(document.querySelectorAll('.nav-button'), function (button) {
-      var active = button.getAttribute('data-view') === view;
-      button.classList.toggle('active', active);
-      button.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-  }
-
-  function toggleFavorite(id) {
-    var index = favorites.indexOf(id);
-    if (index === -1) favorites.push(id); else favorites.splice(index, 1);
-    safeWrite('cvytv-favorites', JSON.stringify(favorites));
-    render();
-  }
-
-  function addRecent(id) {
-    recent = [id].concat(recent.filter(function (item) { return item !== id; })).slice(0, 20);
-    safeWrite('cvytv-recent', JSON.stringify(recent));
-  }
-
-  function setPlayerMessage(title, body) {
-    video.hidden = true;
-    playerMessage.hidden = false;
-    setText('playerMessageTitle', title);
-    setText('playerMessageBody', body);
-  }
-
-  function destroyPlayer() {
-    if (hlsInstance) {
-      try { hlsInstance.destroy(); } catch (error) { /* ignore cleanup error */ }
-      hlsInstance = null;
-    }
-    try { video.pause(); } catch (error) { /* ignore */ }
-    video.removeAttribute('src');
-    try { video.load(); } catch (error) { /* ignore */ }
-    video.hidden = true;
-  }
-
-  function openChannel(channel) {
-    selectedChannel = channel;
-    addRecent(channel.id);
-    setText('playingName', channel.name);
-    setText('liveLabel', t('channelLabel'));
-    player.hidden = false;
-    officialPageButton.hidden = !channel.officialPage;
-    officialPageButton.textContent = t('openOfficial');
-    destroyPlayer();
-
-    if (channel.streamUrl) {
-      startStream(channel);
-    } else {
-      setPlayerMessage(t('noStreamTitle'), t('noStreamBody'));
-      playerStatus.textContent = channel.officialPage ? t('opening') : t('playerReady');
-    }
-    try { player.scrollIntoView(false); } catch (error) { /* ignore */ }
-    document.getElementById('closePlayer').focus();
-  }
-
-  function attemptVideoPlay() {
-    var result;
-    try { result = video.play(); }
-    catch (error) { playerStatus.textContent = t('playError'); return; }
-    if (result && typeof result.then === 'function') {
-      result.then(function () { playerStatus.textContent = ''; }, function () { playerStatus.textContent = t('playError'); });
-    }
-  }
-
-  function startStream(channel) {
-    var url = channel.streamUrl;
-    var isHls = channel.streamType === 'hls' || /\.m3u8($|\?)/i.test(url);
-    playerMessage.hidden = true;
-    video.hidden = false;
-    playerStatus.textContent = '';
-
-    if (isHls && video.canPlayType && (video.canPlayType('application/vnd.apple.mpegurl') || video.canPlayType('application/x-mpegURL'))) {
-      video.src = url;
-      attemptVideoPlay();
-    } else if (isHls && window.Hls && window.Hls.isSupported && window.Hls.isSupported()) {
-      try {
-        hlsInstance = new window.Hls({ enableWorker: false });
-        hlsInstance.on(window.Hls.Events.MANIFEST_PARSED, function () { playerStatus.textContent = t('pressPlay'); });
-        hlsInstance.on(window.Hls.Events.ERROR, function (event, data) {
-          if (data && data.fatal) {
-            destroyPlayer();
-            setPlayerMessage(t('noStreamTitle'), t('videoError'));
-            playerStatus.textContent = t('videoError');
-          }
-        });
-        hlsInstance.loadSource(url);
-        hlsInstance.attachMedia(video);
-      } catch (error) {
-        setPlayerMessage(t('noStreamTitle'), t('unsupported'));
-        return;
-      }
-    } else if (isHls) {
-      setPlayerMessage(t('noStreamTitle'), t('unsupported'));
-      return;
-    } else {
-      video.src = url;
-      attemptVideoPlay();
-    }
-  }
-
-  function closePlayer() {
-    destroyPlayer();
-    player.hidden = true;
-    selectedChannel = null;
-  }
-
-  function openOfficialPage() {
-    if (!selectedChannel || !selectedChannel.officialPage) return;
-    // Same-tab navigation is more reliable on TV browsers than pop-up windows.
-    window.location.href = selectedChannel.officialPage;
-  }
-
-  function deviceDiagnostics() {
-    var nativeHls = 'No';
-    try {
-      nativeHls = (video.canPlayType('application/vnd.apple.mpegurl') || video.canPlayType('application/x-mpegURL')) || 'No';
-    } catch (error) { nativeHls = 'Unavailable'; }
-    var storage = 'Unavailable';
-    try { localStorage.setItem('cvytv-test', '1'); localStorage.removeItem('cvytv-test'); storage = 'Available'; }
-    catch (error) { storage = 'Blocked'; }
-    var items = [
-      [t('device'), navigator.userAgent || 'Unknown'],
-      [t('resolution'), (window.screen && screen.width ? screen.width + ' × ' + screen.height : 'Unknown')],
-      [t('nativeHls'), nativeHls],
-      [t('mse'), !!(window.MediaSource || window.WebKitMediaSource) ? 'Available' : 'Not detected'],
-      [t('hlsjs'), window.Hls ? 'Loaded' : 'Not loaded'],
-      [t('storage'), storage]
-    ];
-    var box = document.getElementById('diagnostics');
-    box.innerHTML = '';
-    items.forEach(function (item) {
-      var row = document.createElement('div');
-      row.className = 'diagnostic';
-      var label = document.createElement('b');
-      label.textContent = item[0];
-      var value = document.createElement('span');
-      value.textContent = String(item[1]);
-      row.appendChild(label);
-      row.appendChild(value);
-      box.appendChild(row);
-    });
-  }
-
-  function focusableElements() {
-    return Array.prototype.slice.call(document.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], video[controls], [tabindex="0"]')).filter(function (el) {
-      if (el.hidden) return false;
-      var rect = el.getBoundingClientRect();
-      return rect.width > 0 && rect.height > 0;
-    });
-  }
-
-  function moveFocus(direction) {
-    var current = document.activeElement;
-    var list = focusableElements();
-    if (!list.length) return;
-    if (!current || current === document.body || list.indexOf(current) === -1) {
-      list[0].focus();
-      return;
-    }
-    var rect = current.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2;
-    var cy = rect.top + rect.height / 2;
-    var best = null;
-    var bestScore = Infinity;
-    list.forEach(function (candidate) {
-      if (candidate === current) return;
-      var r = candidate.getBoundingClientRect();
-      var x = r.left + r.width / 2;
-      var y = r.top + r.height / 2;
-      var primary = 0;
-      var cross = 0;
-      if (direction === 'right' && x > cx + 4) { primary = x - cx; cross = Math.abs(y - cy); }
-      else if (direction === 'left' && x < cx - 4) { primary = cx - x; cross = Math.abs(y - cy); }
-      else if (direction === 'down' && y > cy + 4) { primary = y - cy; cross = Math.abs(x - cx); }
-      else if (direction === 'up' && y < cy - 4) { primary = cy - y; cross = Math.abs(x - cx); }
-      else return;
-      var score = primary + cross * 1.65;
-      if (score < bestScore) { bestScore = score; best = candidate; }
-    });
-    if (best) best.focus();
-  }
-
-  function handleRemoteKey(event) {
-    var key = event.key || '';
-    var code = event.keyCode || event.which || 0;
-    var back = key === 'Escape' || key === 'Backspace' || code === 8 || code === 27 || code === 461 || code === 10009;
-
-    if (back) {
-      if (!player.hidden) { event.preventDefault(); closePlayer(); document.getElementById('homeButton').focus(); return; }
-      if (!document.getElementById('devicePanel').hidden) { event.preventDefault(); document.getElementById('devicePanel').hidden = true; document.getElementById('deviceInfoButton').focus(); return; }
-      if (view !== 'all') { event.preventDefault(); view = 'all'; category = 'All'; search.value = ''; renderFilters(); render(); document.getElementById('homeButton').focus(); return; }
-      if (document.activeElement === search) { search.blur(); return; }
-    }
-
-    if (!player.hidden && key === 'MediaPlayPause') {
-      event.preventDefault();
-      if (video.paused) attemptVideoPlay(); else video.pause();
-      return;
-    }
-    if (!player.hidden && key === 'MediaPlay') { event.preventDefault(); attemptVideoPlay(); return; }
-    if (!player.hidden && key === 'MediaPause') { event.preventDefault(); video.pause(); return; }
-    if (!player.hidden && key === 'MediaStop') { event.preventDefault(); closePlayer(); return; }
-
-    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].indexOf(key) === -1) {
-      if (code >= 37 && code <= 40) key = ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'][code - 37];
-      else return;
-    }
-    if (document.activeElement === video) return;
-    if (document.activeElement === languageSelect) return;
-    if (document.activeElement === search && (key === 'ArrowLeft' || key === 'ArrowRight')) return;
-    event.preventDefault();
-    moveFocus(key.replace('Arrow', '').toLowerCase());
-  }
-
-  Array.prototype.forEach.call(document.querySelectorAll('.nav-button'), function (button) {
-    button.addEventListener('click', function () {
-      view = button.getAttribute('data-view');
-      render();
-    });
-  });
-  document.getElementById('filters').addEventListener('click', function (event) {
-    var button = event.target;
-    while (button && button !== event.currentTarget && !button.getAttribute('data-category')) button = button.parentNode;
-    if (!button || button === event.currentTarget) return;
-    category = button.getAttribute('data-category');
-    renderFilters();
-    render();
-    var selectedFilter = document.querySelector('.chip.selected');
-    if (selectedFilter) selectedFilter.focus();
-  });
-  search.addEventListener('input', render);
-  languageSelect.addEventListener('change', function () {
-    currentLanguage = languageSelect.value;
-    safeWrite('cvytv-language', currentLanguage);
-    applyLanguage();
-  });
-  document.getElementById('closePlayer').addEventListener('click', closePlayer);
-  officialPageButton.addEventListener('click', openOfficialPage);
-  document.getElementById('deviceInfoButton').addEventListener('click', function () {
-    deviceDiagnostics();
-    document.getElementById('devicePanel').hidden = false;
-    try { document.getElementById('devicePanel').scrollIntoView(false); } catch (error) { /* ignore */ }
-    document.getElementById('closeDevicePanel').focus();
-  });
-  document.getElementById('closeDevicePanel').addEventListener('click', function () {
-    document.getElementById('devicePanel').hidden = true;
-  });
-  video.addEventListener('error', function () {
-    playerStatus.textContent = t('videoError');
-    setText('liveLabel', t('channelLabel'));
-  });
-  video.addEventListener('playing', function () { playerStatus.textContent = ''; setText('liveLabel', t('live')); });
-  video.addEventListener('waiting', function () { playerStatus.textContent = 'Buffering…'; });
-  document.addEventListener('keydown', handleRemoteKey, true);
-  window.addEventListener('pagehide', destroyPlayer);
-
-  applyLanguage();
-  var firstCard = grid.querySelector('.channel');
-  if (firstCard) firstCard.focus();
+  function renderFilters() { var el = document.getElementById('cvytv-filters'); var cats = ['All', 'Kurdish', 'Iraqi']; el.innerHTML = cats.map(function (c) { return '<button class="filter ' + (category === c ? 'active' : '') + '" data-cat="' + c + '">' + (c === 'All' ? t('all') : c) + '</button>'; }).join(''); Array.prototype.forEach.call(el.children, function (b) { b.onclick = function () { category = b.getAttribute('data-cat'); renderFilters(); render(); }; }); }
+  function render() { var list = visible(); var grid = document.getElementById('cvytv-grid'); grid.innerHTML = list.length ? list.map(function (c) { return '<button class="card" data-id="' + esc(c.id) + '"><span class="logo" style="background:' + esc(c.color) + '">' + esc(c.short) + '</span><span class="card-name">' + esc(c.name) + '</span><small>' + esc(c.category) + ' · ' + (c.stream ? t('live') : t('source')) + '</small></button>'; }).join('') : '<div class="empty">No channels found.</div>'; Array.prototype.forEach.call(grid.querySelectorAll('[data-id]'), function (b) { b.onclick = function () { select(b.getAttribute('data-id')); }; }); }
+  function select(id) { current = channels.filter(function (c) { return c.id === id; })[0]; var video = document.getElementById('cvytv-video'); if (hls && hls.destroy) { hls.destroy(); hls = null; } video.removeAttribute('src'); video.load(); document.getElementById('cvytv-now').textContent = current.name; document.getElementById('cvytv-source').textContent = t('external') + ' · ' + current.sourceName; document.getElementById('cvytv-source').href = current.source; document.getElementById('cvytv-play').textContent = current.stream ? t('play') : t('external'); document.getElementById('cvytv-status').textContent = current.stream ? t('loading') : t('noStream'); if (current.stream) loadStream(current); }
+  function loadStream(c) { var video = document.getElementById('cvytv-video'); video.onerror = function () { document.getElementById('cvytv-status').textContent = t('unavailable') + ' ' + t('error'); }; document.getElementById('cvytv-play').onclick = function () { video.play().catch(function () {}); }; if (video.canPlayType && video.canPlayType('application/vnd.apple.mpegurl')) { video.src = c.stream; video.play().then(function () { document.getElementById('cvytv-status').textContent = t('live') + ' · ' + t('checked') + ': ' + c.checked; }).catch(function () { document.getElementById('cvytv-status').textContent = t('loading'); }); return; } loadHls(video, c.stream); }
+  function loadHls(video, url) { if (window.Hls) { attachHls(video, url); return; } if (!hlsPromise) { hlsPromise = new Promise(function (resolve, reject) { var s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js'; s.onload = resolve; s.onerror = reject; document.head.appendChild(s); }); } hlsPromise.then(function () { attachHls(video, url); }).catch(function () { document.getElementById('cvytv-status').textContent = t('unavailable'); }); }
+  function attachHls(video, url) { if (!window.Hls || !window.Hls.isSupported()) { document.getElementById('cvytv-status').textContent = t('unavailable'); return; } hls = new window.Hls({ enableWorker: false, lowLatencyMode: true }); hls.loadSource(url); hls.attachMedia(video); hls.on(window.Hls.Events.MANIFEST_PARSED, function () { document.getElementById('cvytv-status').textContent = t('live') + ' · ' + t('checked') + ': ' + current.checked; video.play().catch(function () {}); }); hls.on(window.Hls.Events.ERROR, function (event, data) { if (data && data.fatal) document.getElementById('cvytv-status').textContent = t('unavailable') + ' ' + t('error'); }); }
+  function css() { return 'html,body{margin:0;background:#07110f;color:#edf8f3;font-family:Arial,sans-serif}*{box-sizing:border-box}.cvytv{max-width:1500px;margin:auto;padding:36px 5vw}header,.layout,.hero,.player-actions,.player-head{display:flex;gap:20px;align-items:center}header{justify-content:space-between}.brand{font-size:30px;font-weight:900;letter-spacing:-2px}.brand span{color:#3de7b1}h1{font-size:clamp(28px,4vw,58px);margin:28px 0 6px}p{color:#9bb8ad;margin:0}.lang{color:#91afa5;display:flex;gap:8px;align-items:center}select,input,button{font:inherit}select,input{background:#10211d;border:1px solid #2f5246;border-radius:10px;color:#e9fff6;padding:12px}.hero{justify-content:space-between;margin:34px 0 20px;flex-wrap:wrap}.filters{display:flex;gap:8px;flex-wrap:wrap}.filter{border:1px solid #31584a;background:#0d1d19;color:#b5d4c7;border-radius:999px;padding:10px 18px;cursor:pointer}.filter.active{background:#3de7b1;color:#06201a;border-color:#3de7b1}.hero input{min-width:250px}.layout{align-items:flex-start}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:13px;flex:1}.card{min-height:150px;text-align:left;background:#0d1d19;border:1px solid #23483c;border-radius:16px;color:#eefbf5;padding:18px;cursor:pointer;transition:.15s}.card:hover,.card:focus{outline:3px solid #3de7b1;transform:translateY(-2px)}.logo{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;color:#06120e;font-weight:900}.card-name{display:block;font-weight:700;margin-top:18px}.card small{display:block;color:#91afa5;margin-top:8px}.player{width:420px;min-width:320px;background:#0d1d19;border:1px solid #31584a;border-radius:16px;padding:16px;position:sticky;top:16px}.player-head{justify-content:space-between;color:#3de7b1;font-size:13px}.player-head span:last-child{color:#edf8f3;font-weight:700}.player video{width:100%;aspect-ratio:16/9;background:#020605;margin:14px 0;border-radius:10px}.status{min-height:48px;color:#a9c7bb;line-height:1.5}.player-actions a,.player-actions button{flex:1;text-align:center;text-decoration:none;border:0;border-radius:9px;padding:11px;cursor:pointer}.player-actions a{background:#19362c;color:#baf9e2}.player-actions button{background:#3de7b1;color:#06201a;font-weight:700}footer{color:#6f9184;font-size:12px;margin-top:26px;line-height:1.5}.empty{color:#91afa5;padding:30px}@media(max-width:900px){.layout{display:block}.player{width:100%;position:static;margin-top:24px}.grid{grid-template-columns:repeat(2,1fr)}}'; }
+  shell();
 })();
